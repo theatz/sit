@@ -1,17 +1,6 @@
 version: '3.3'
 
 services:
-  pure_python:
-    build:
-      context: .
-      dockerfile: web/Dockerfile
-    restart: unless-stopped
-    command:
-      - sleep
-      - infinity
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
   web:
     build:
       context: .
@@ -22,18 +11,14 @@ services:
     volumes:
       - ./web/source:/web/source
     command:
-      - /bin/bash
-      - -c
-      - |
-        python web/source/manage.py migrate
-        python web/source/manage.py runserver 0.0.0.0:8000
+      "python3 web/source/manage.py runserver 0.0.0.0:8000"
 
   nginx:
     image: nginx:latest
     restart: unless-stopped
     ports:
-      - 18081:80
+      - 80:80
     volumes:
-      - /nginx:/etc/nginx/conf.d
+      - ./nginx:/etc/nginx/conf.d
     depends_on:
       - web
